@@ -4,7 +4,9 @@ const canvas = document.querySelector('canvas')
 const context =canvas.getContext('2d')
 
 canvas.width = window.innerWidth
-canvas.height = window.innerHeight  
+canvas.height = window.innerHeight
+
+const gravity = 0.5
 
 // Player
 class Player {
@@ -29,8 +31,15 @@ class Player {
         context.fillRect(this.position.x, this.position.y, this.width, this.height)
     }
     update () {
-        this.draw(); 
-        this.position.y += this.velocity.y;
+        this.draw();
+        this.position.y += this.velocity.y; 
+        if (this.position.y + this.height + this.velocity.y <= canvas.height) {
+            this.velocity.y += gravity;
+        }
+        else {
+            this.velocity.y = 0
+        }
+        
     }
 }
 
