@@ -1,6 +1,6 @@
-import platform from './img/platform.png'
+import platform from "../img/platform.png";
 
-console.log(platform)
+console.log(platform);
 
 const canvas = document.querySelector("canvas");
 
@@ -47,7 +47,7 @@ class Player {
 }
 
 class Platform {
-  constructor({x, y}) {
+  constructor({ x, y }) {
     this.position = {
       x,
       y,
@@ -69,7 +69,6 @@ const platforms = [
   new Platform({ x: 500, y: 200 }),
 ];
 
-
 const keys = {
   right: {
     pressed: false,
@@ -79,60 +78,55 @@ const keys = {
   },
 };
 
-let scrollOffset = 0
+let scrollOffset = 0;
 
 function animate() {
   requestAnimationFrame(animate);
   context.clearRect(0, 0, canvas.width, canvas.height);
   player.update();
   platforms.forEach((platform) => {
-      platform.draw()
-  })
+    platform.draw();
+  });
 
   // Control the player movement using keyboard
   if (keys.right.pressed && player.position.x < 400) {
     player.velocity.x = 5;
-  } 
-  else if (keys.left.pressed && player.position.x > 100) {
+  } else if (keys.left.pressed && player.position.x > 100) {
     player.velocity.x = -5;
-  } 
-  else {
+  } else {
     player.velocity.x = 0;
 
     if (keys.right.pressed) {
-        scrollOffset += 5
-        platforms.forEach((platform) => {
-          platform.position.x -= 5;
-        });
-        
-    }
-    else if (keys.left.pressed) {
-        scrollOffset -= 5;
-        platforms.forEach((platform) => {
-          platform.position.x += 5;
-        });
+      scrollOffset += 5;
+      platforms.forEach((platform) => {
+        platform.position.x -= 5;
+      });
+    } else if (keys.left.pressed) {
+      scrollOffset -= 5;
+      platforms.forEach((platform) => {
+        platform.position.x += 5;
+      });
     }
   }
 
-//   console.log(scrollOffset)
- 
+  //   console.log(scrollOffset)
+
   // Platform Collision Detection
   platforms.forEach((platform) => {
-        if (
-          player.position.y + player.height <= platform.position.y &&
-          player.position.y + player.height + player.velocity.y >=
-            platform.position.y &&
-          player.position.x + player.width >= platform.position.x &&
-          player.position.x < platform.position.x + platform.width
-        ) {
-          player.velocity.y = 0;
-        }
-  })
+    if (
+      player.position.y + player.height <= platform.position.y &&
+      player.position.y + player.height + player.velocity.y >=
+        platform.position.y &&
+      player.position.x + player.width >= platform.position.x &&
+      player.position.x < platform.position.x + platform.width
+    ) {
+      player.velocity.y = 0;
+    }
+  });
   if (scrollOffset > 2000) {
-      console.log("You win")
+    console.log("You win");
   }
-
-}; // End of animate function
+} // End of animate function
 
 animate();
 
@@ -142,7 +136,7 @@ window.addEventListener("keydown", ({ keyCode }) => {
     case 65:
       console.log("left");
       keys.left.pressed = true;
-      player.velocity.x -= 1;  //1 represents 1 step forward
+      player.velocity.x -= 1; //1 represents 1 step forward
       break;
     case 68:
       console.log("right");
