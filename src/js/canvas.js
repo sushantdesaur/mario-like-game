@@ -7,10 +7,10 @@ const canvas = document.querySelector("canvas");
 // Added 2D context
 const context = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = 1024
+canvas.height = 576;
 
-const gravity = 0.5;
+const gravity = 0.7;
 
 // Player
 class Player {
@@ -27,8 +27,8 @@ class Player {
     };
 
     // Set object width and height
-    this.width = 100;
-    this.height = 100;
+    this.width = 50;
+    this.height = 50;
   }
   draw() {
     context.fillStyle = "red";
@@ -47,26 +47,33 @@ class Player {
 }
 
 class Platform {
-  constructor({ x, y }) {
+  constructor({ x, y, image }) {
     this.position = {
       x,
       y,
     };
-    this.width = 200;
-    this.height = 20;
+    this.image = image;
+    this.width = image.width
+    this.height = image.height
+
+    
   }
   draw() {
-    context.fillStyle = "blue";
-    context.fillRect(this.position.x, this.position.y, this.width, this.height);
+    context.drawImage(this.image, this.position.x, this.position.y)
   }
 }
 
-const player = new Player();
+const image = new Image()
+image.src = platform
 
+console.log(image)
+
+
+const player = new Player();
 // const platform = new Platform();
 const platforms = [
-  new Platform({ x: 200, y: 100 }),
-  new Platform({ x: 500, y: 200 }),
+  new Platform({ x: -1, y: 470, image}),
+  new Platform({ x: image.width -3, y: 470, image }),
 ];
 
 const keys = {
@@ -82,11 +89,14 @@ let scrollOffset = 0;
 
 function animate() {
   requestAnimationFrame(animate);
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  player.update();
+  context.fillStyle = 'white'
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  
   platforms.forEach((platform) => {
     platform.draw();
   });
+
+  player.update();
 
   // Control the player movement using keyboard
   if (keys.right.pressed && player.position.x < 400) {
