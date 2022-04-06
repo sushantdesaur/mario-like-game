@@ -1,4 +1,7 @@
 import platform from "../img/platform.png";
+import background from "../img/background.png";
+import hills from "../img/hills.png";
+
 
 console.log(platform);
 
@@ -63,17 +66,51 @@ class Platform {
   }
 }
 
-const image = new Image()
-image.src = platform
+class GenericObject {
+  constructor({ x, y, image }) {
+    this.position = {
+      x,
+      y,
+    };
+    this.image = image;
+    this.width = image.width;
+    this.height = image.height;
+  }
+  draw() {
+    context.drawImage(this.image, this.position.x, this.position.y);
+  }
+}
 
-console.log(image)
+function createImage (imageSrc) {
+  const image = new Image();
+  image.src = imageSrc
+  return image
+  // console.log(image);
+}
 
+// Create Images
+const platformImage = createImage(platform)
+const backgroundImage = createImage(background);
+const hillImage = createImage(hills)
 
 const player = new Player();
 // const platform = new Platform();
 const platforms = [
-  new Platform({ x: -1, y: 470, image}),
-  new Platform({ x: image.width -3, y: 470, image }),
+  new Platform({ x: -1, y: 470, image: platformImage }),
+  new Platform({ x: platformImage.width - 3, y: 470, image: platformImage }),
+];
+
+const genericObjects = [
+  new GenericObject({
+    x: -1,
+    y: -1,
+    image: backgroundImage,
+  }),
+  new GenericObject({
+    x: -1,
+    y: -1,
+    image: hillImage,
+  }),
 ];
 
 const keys = {
@@ -91,11 +128,14 @@ function animate() {
   requestAnimationFrame(animate);
   context.fillStyle = 'white'
   context.fillRect(0, 0, canvas.width, canvas.height);
+
+  genericObjects.forEach((genericObject )=> {
+    genericObject.draw()
+  })
   
   platforms.forEach((platform) => {
     platform.draw();
   });
-
   player.update();
 
   // Control the player movement using keyboard
@@ -111,10 +151,16 @@ function animate() {
       platforms.forEach((platform) => {
         platform.position.x -= 5;
       });
+      genericObjects.forEach((genericObject) => {
+        genericObject.position.x -= 3
+      })
     } else if (keys.left.pressed) {
       scrollOffset -= 5;
       platforms.forEach((platform) => {
         platform.position.x += 5;
+      });
+      genericObjects.forEach((genericObject) => {
+        genericObject.position.x += 3;
       });
     }
   }
