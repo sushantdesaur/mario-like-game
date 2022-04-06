@@ -10,7 +10,7 @@ const canvas = document.querySelector("canvas");
 // Added 2D context
 const context = canvas.getContext("2d");
 
-canvas.width = 1024
+canvas.width = 1024;
 canvas.height = 576;
 
 const gravity = 0.7;
@@ -43,8 +43,6 @@ class Player {
     this.position.y += this.velocity.y;
     if (this.position.y + this.height + this.velocity.y <= canvas.height) {
       this.velocity.y += gravity;
-    } else {
-      this.velocity.y = 0;
     }
   }
 }
@@ -56,13 +54,11 @@ class Platform {
       y,
     };
     this.image = image;
-    this.width = image.width
-    this.height = image.height
-
-    
+    this.width = image.width;
+    this.height = image.height;
   }
   draw() {
-    context.drawImage(this.image, this.position.x, this.position.y)
+    context.drawImage(this.image, this.position.x, this.position.y);
   }
 }
 
@@ -81,26 +77,34 @@ class GenericObject {
   }
 }
 
-function createImage (imageSrc) {
+function createImage(imageSrc) {
   const image = new Image();
-  image.src = imageSrc
-  return image
+  image.src = imageSrc;
+  return image;
   // console.log(image);
 }
 
-// Create Images
-const platformImage = createImage(platform)
-const backgroundImage = createImage(background);
-const hillImage = createImage(hills)
+let platformImage = createImage(platform);
+let backgroundImage = createImage(background);
+let hillImage = createImage(hills);
 
-const player = new Player();
-// const platform = new Platform();
-const platforms = [
+let player = new Player();
+// let platform = new Platform();
+let platforms = [
   new Platform({ x: -1, y: 470, image: platformImage }),
-  new Platform({ x: platformImage.width - 3, y: 470, image: platformImage }),
+  new Platform({
+    x: platformImage.width - 3,
+    y: 470,
+    image: platformImage,
+  }),
+  new Platform({
+    x: platformImage.width * 2 + 100,
+    y: 470,
+    image: platformImage,
+  }),
 ];
 
-const genericObjects = [
+let genericObjects = [
   new GenericObject({
     x: -1,
     y: -1,
@@ -113,7 +117,7 @@ const genericObjects = [
   }),
 ];
 
-const keys = {
+let keys = {
   right: {
     pressed: false,
   },
@@ -124,15 +128,53 @@ const keys = {
 
 let scrollOffset = 0;
 
+function init() {
+  // Create Images
+  platformImage = createImage(platform);
+  backgroundImage = createImage(background);
+  hillImage = createImage(hills);
+
+  player = new Player();
+
+  platforms = [
+    new Platform({ x: -1, y: 470, image: platformImage }),
+    new Platform({
+      x: platformImage.width - 3,
+      y: 470,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 2 + 100,
+      y: 470,
+      image: platformImage,
+    }),
+  ];
+
+  genericObjects = [
+    new GenericObject({
+      x: -1,
+      y: -1,
+      image: backgroundImage,
+    }),
+    new GenericObject({
+      x: -1,
+      y: -1,
+      image: hillImage,
+    }),
+  ];
+
+scrollOffset = 0;
+}
+
 function animate() {
   requestAnimationFrame(animate);
-  context.fillStyle = 'white'
+  context.fillStyle = "white";
   context.fillRect(0, 0, canvas.width, canvas.height);
 
-  genericObjects.forEach((genericObject )=> {
-    genericObject.draw()
-  })
-  
+  genericObjects.forEach((genericObject) => {
+    genericObject.draw();
+  });
+
   platforms.forEach((platform) => {
     platform.draw();
   });
@@ -152,8 +194,8 @@ function animate() {
         platform.position.x -= 5;
       });
       genericObjects.forEach((genericObject) => {
-        genericObject.position.x -= 3
-      })
+        genericObject.position.x -= 3;
+      });
     } else if (keys.left.pressed) {
       scrollOffset -= 5;
       platforms.forEach((platform) => {
@@ -174,13 +216,20 @@ function animate() {
       player.position.y + player.height + player.velocity.y >=
         platform.position.y &&
       player.position.x + player.width >= platform.position.x &&
-      player.position.x < platform.position.x + platform.width
+      player.position.x <= platform.position.x + platform.width
     ) {
       player.velocity.y = 0;
     }
   });
-  if (scrollOffset > 2000) {
+
+  // win condition
+  if (scrollOffset > 20000) {
     console.log("You win");
+  }
+
+  // lose condition
+  if (player.position.y > canvas.height) {
+    init();
   }
 } // End of animate function
 
