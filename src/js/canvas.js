@@ -1,6 +1,7 @@
 import platform from "../img/platform.png";
 import background from "../img/background.png";
 import hills from "../img/hills.png";
+import platformSmallTall from "../img/platformSmallTall.png"
 
 
 console.log(platform);
@@ -18,6 +19,8 @@ const gravity = 0.7;
 // Player
 class Player {
   constructor() {
+    //player speed
+    this.speed = 10
     // send position on x and y axis
     this.position = {
       x: 100,
@@ -87,35 +90,13 @@ function createImage(imageSrc) {
 let platformImage = createImage(platform);
 let backgroundImage = createImage(background);
 let hillImage = createImage(hills);
+let platformSmallTallImage = createImage(platformSmallTall)
 
 let player = new Player();
 // let platform = new Platform();
-let platforms = [
-  new Platform({ x: -1, y: 470, image: platformImage }),
-  new Platform({
-    x: platformImage.width - 3,
-    y: 470,
-    image: platformImage,
-  }),
-  new Platform({
-    x: platformImage.width * 2 + 100,
-    y: 470,
-    image: platformImage,
-  }),
-];
+let platforms = [];
 
-let genericObjects = [
-  new GenericObject({
-    x: -1,
-    y: -1,
-    image: backgroundImage,
-  }),
-  new GenericObject({
-    x: -1,
-    y: -1,
-    image: hillImage,
-  }),
-];
+let genericObjects = [];
 
 let keys = {
   right: {
@@ -133,10 +114,16 @@ function init() {
   platformImage = createImage(platform);
   backgroundImage = createImage(background);
   hillImage = createImage(hills);
+  platformSmallTallImage = createImage(platformSmallTall) 
 
   player = new Player();
 
   platforms = [
+    new Platform({
+      x: platformImage.width * 4 + 300 - 2 + platformImage.width - platformSmallTallImage.width,
+      y: 270,
+      image: platformSmallTallImage,
+    }),
     new Platform({ x: -1, y: 470, image: platformImage }),
     new Platform({
       x: platformImage.width - 3,
@@ -145,6 +132,21 @@ function init() {
     }),
     new Platform({
       x: platformImage.width * 2 + 100,
+      y: 470,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 3 + 300,
+      y: 470,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 4 + 300 - 2,
+      y: 470,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 5 + 700 - 2,
       y: 470,
       image: platformImage,
     }),
@@ -182,27 +184,27 @@ function animate() {
 
   // Control the player movement using keyboard
   if (keys.right.pressed && player.position.x < 400) {
-    player.velocity.x = 5;
+    player.velocity.x = player.speed;
   } else if (keys.left.pressed && player.position.x > 100) {
-    player.velocity.x = -5;
+    player.velocity.x = -player.speed;
   } else {
     player.velocity.x = 0;
 
     if (keys.right.pressed) {
-      scrollOffset += 5;
+      scrollOffset += player.speed;
       platforms.forEach((platform) => {
-        platform.position.x -= 5;
+        platform.position.x -= player.speed;
       });
       genericObjects.forEach((genericObject) => {
-        genericObject.position.x -= 3;
+        genericObject.position.x -= player.speed * 0.66;
       });
     } else if (keys.left.pressed) {
-      scrollOffset -= 5;
+      scrollOffset -= player.speed;
       platforms.forEach((platform) => {
-        platform.position.x += 5;
+        platform.position.x += player.speed;
       });
       genericObjects.forEach((genericObject) => {
-        genericObject.position.x += 3;
+        genericObject.position.x += player.speed * 0.66;
       });
     }
   }
@@ -223,7 +225,7 @@ function animate() {
   });
 
   // win condition
-  if (scrollOffset > 20000) {
+  if (scrollOffset > platformImage.width * 5 + 300 - 2) {
     console.log("You win");
   }
 
@@ -233,6 +235,7 @@ function animate() {
   }
 } // End of animate function
 
+init();
 animate();
 
 window.addEventListener("keydown", ({ keyCode }) => {
@@ -241,12 +244,10 @@ window.addEventListener("keydown", ({ keyCode }) => {
     case 65:
       console.log("left");
       keys.left.pressed = true;
-      player.velocity.x -= 1; //1 represents 1 step forward
       break;
     case 68:
       console.log("right");
       keys.right.pressed = true;
-      player.velocity.x += 1; // 1 represents 1 step forward
       break;
     case 87:
       console.log("up");
